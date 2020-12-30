@@ -6,4 +6,5 @@ type Config struct {
 	PostgresPassword string `json:"postgres_password"`
 	PostgresDbName   string `json:"postgres_db_name"`
 	PostgresPort     string `json:"postgres_port"`
+	PostgresHost     string `json:"postgres_host"`
 }
