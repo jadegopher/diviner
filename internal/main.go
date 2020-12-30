@@ -20,12 +20,15 @@ func main() {
 		panic(err)
 	}
 
-	bot, err := tgbotapi.NewBotAPI(c.Token())
+	bot, err := tgbotapi.NewBotAPI(c.TelegramToken())
 	if err != nil {
 		panic(err)
 	}
 
-	h := handler.New(dbConn, bot, keyboard.New())
+	h, err := handler.New(dbConn, bot, keyboard.New(), c.WeatherToken())
+	if err != nil {
+		panic(err)
+	}
 
 	if err := h.HandleUpdates(); err != nil {
 		panic(err)

@@ -7,7 +7,8 @@ import (
 )
 
 func NewConnection(user, password, host, port, dbName string) (*sql.DB, error) {
-	connStr := fmt.Sprintf("dbname=%s user=%s password=%s host=%s port=%s", dbName, user, password, host, port)
+	connStr := fmt.Sprintf("dbname=%s user=%s password=%s host=%s port=%s sslmode=disable",
+		dbName, user, password, host, port)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err

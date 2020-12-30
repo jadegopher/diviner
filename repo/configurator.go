@@ -2,7 +2,8 @@ package repo
 
 type IConfigurator interface {
 	Read() error
-	Token() string
+	TelegramToken() string
+	WeatherToken() string
 	PostgresLogin() string
 	PostgresPassword() string
 	PostgresPort() string

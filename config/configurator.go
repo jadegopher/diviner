@@ -22,18 +22,23 @@ func (f *file) Read() error {
 	if err := godotenv.Load(f.path); err != nil {
 		return err
 	}
-	f.config.Token = os.Getenv("TOKEN")
+	f.config.TelegramToken = os.Getenv("TELEGRAM_TOKEN")
 	f.config.PostgresLogin = os.Getenv("POSTGRES_LOGIN")
 	f.config.PostgresPassword = os.Getenv("POSTGRES_PASSWORD")
 	f.config.PostgresDbName = os.Getenv("POSTGRES_DB_NAME")
 	f.config.PostgresHost = os.Getenv("POSTGRES_HOST")
 	f.config.PostgresPort = os.Getenv("POSTGRES_PORT")
+	f.config.OpenWeatherToken = os.Getenv("OPEN_WEATHER_TOKEN")
 
 	return nil
 }
 
-func (f *file) Token() string {
-	return f.config.Token
+func (f *file) TelegramToken() string {
+	return f.config.TelegramToken
+}
+
+func (f *file) WeatherToken() string {
+	return f.config.OpenWeatherToken
 }
 
 func (f *file) PostgresLogin() string {

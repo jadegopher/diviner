@@ -13,11 +13,18 @@ type client struct {
 	coordinates repo.ICoordinates
 }
 
-func New(db *sql.DB) usecases.IHandlerDB {
-	return &client{
+func New(db *sql.DB) (usecases.IHandlerDB, error) {
+	ret := &client{
 		user:        user.New(db),
 		coordinates: coordinates.New(db),
 	}
+	/*if err := ret.User().CreateTableIfNotExists(); err != nil {
+		return nil, err
+	}
+	if err := ret.Coordinates().CreateTableIfNotExist(); err != nil {
+		return nil, err
+	}*/
+	return ret, nil
 }
 
 func (c *client) User() repo.IUser {
