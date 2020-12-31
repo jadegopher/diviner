@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/Syfaro/telegram-bot-api"
 	config "telegram-pug/config"
+	"telegram-pug/internal/app"
 	"telegram-pug/internal/database/postgres/gorm"
-	"telegram-pug/internal/handler"
 	"telegram-pug/internal/keyboard"
 )
 
@@ -25,7 +25,7 @@ func main() {
 		panic(err)
 	}
 
-	h, err := handler.New(dbConn, bot, keyboard.New(), c.WeatherToken())
+	h, err := app.New(dbConn, bot, keyboard.New(), c.WeatherToken())
 	if err != nil {
 		panic(err)
 	}

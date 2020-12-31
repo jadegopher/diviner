@@ -2,22 +2,35 @@ package weather
 
 import (
 	"encoding/json"
-	"fmt"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"telegram-pug/internal/app/handlers/weather/errs"
+	"telegram-pug/internal/app/handlers/weather/messages"
 	"telegram-pug/model"
+	"telegram-pug/repo"
 	"telegram-pug/tools/http/builder"
 )
 
-func Handle(token string, update tgbotapi.Update) (tgbotapi.MessageConfig, error) {
+type weather struct {
+	token string
+}
+
+func New(token string) repo.IHandler {
+	return &weather{token: token}
+}
+
+func (w *weather) Handle(update tgbotapi.Update) (tgbotapi.MessageConfig, error) {
+	if update.Message.Location == nil {
+		return tgbotapi.MessageConfig{}, errs.NilLocationErr
+	}
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 	query := map[string]string{
 		"lat":   strconv.FormatFloat(update.Message.Location.Latitude, 'f', -1, 64),
 		"lon":   strconv.FormatFloat(update.Message.Location.Longitude, 'f', -1, 64),
 		"units": "metric",
-		"appId": token,
+		"appId": w.token,
 	}
 	req, err := builder.New(http.MethodGet, "http://api.openweathermap.org/data/2.5/weather",
 		builder.WithQuery(query))
@@ -37,11 +50,10 @@ func Handle(token string, update tgbotapi.Update) (tgbotapi.MessageConfig, error
 		return tgbotapi.MessageConfig{}, err
 	}
 	if len(weatherInfo.Weather) != 0 {
-		msg.Text = fmt.Sprintf(`Hmmmmm... I see %s and temperature %3.1f degrees. Not bad for a pug who lost his memory`,
-			weatherInfo.Weather[0].Description, weatherInfo.Info.Temp)
+		msg.Text = messages.WeatherSuccess.English(weatherInfo.Weather[0].Description, weatherInfo.Info.Temp)
 
 	} else {
-		msg.Text = `awwwwwww, sorry my magic doesn't work(('`
+		msg.Text = messages.WeatherErr.English()
 	}
 	return msg, nil
 }

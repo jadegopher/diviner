@@ -1,12 +1,13 @@
-package handler
+package app
 
 import (
 	"fmt"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"gorm.io/gorm"
 	"log"
-	"telegram-pug/internal/handler/database"
-	"telegram-pug/internal/handler/weather"
+	"telegram-pug/internal/app/database"
+	"telegram-pug/internal/app/handlers/start"
+	"telegram-pug/internal/app/handlers/weather"
 	"telegram-pug/usecases"
 )
 
@@ -43,6 +44,9 @@ func (h *handler) HandleUpdates() error {
 		return err
 	}
 
+	initHandler := start.New(h.keyboard)
+	weatherHandler := weather.New(h.weatherToken)
+
 	for update := range updates {
 		if update.Message == nil {
 			continue
@@ -51,20 +55,17 @@ func (h *handler) HandleUpdates() error {
 
 			fmt.Println(update.Message.Chat)
 			fmt.Println(update.Message.Date)
-			if update.Message.Location != nil {
-				msg, err = weather.Handle(h.weatherToken, update)
-				if err != nil {
-					log.Println(err)
-				}
+
+			msg, err = initHandler.Handle(update)
+			if err != nil {
+				log.Println(err)
 			}
-			switch update.Message.Text {
-			case "/start":
-				msg.Text = "Henlo stranger... I'm the diviner pug. I forgot everything except my name... " +
-					"I can't recall what happened with me but I'm trying... I lost skills of the greatest diviner.... " +
-					"Oh wow, there is a scroll of the acsients with some magic stuff. Hmmmm, may be I could try to do " +
-					"some street magic? But I need your help.Tap the button when you will be ready"
-				msg.ReplyMarkup = h.keyboard
+
+			msg, err = weatherHandler.Handle(update)
+			if err != nil {
+				log.Println(err)
 			}
+
 			h.bot.Send(msg)
 		}
 	}
