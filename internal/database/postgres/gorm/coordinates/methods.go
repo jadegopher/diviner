@@ -2,14 +2,11 @@ package coordinates
 
 import (
 	"errors"
-	"fmt"
-	"reflect"
 	"telegram-pug/model"
 )
 
 func (c *coordinates) CreateTableIfNotExists() error {
-	if _, err := c.db.Exec(fmt.Sprintf(`create table if not exists %s`,
-		reflect.TypeOf(model.Coordinates{}).Name())); err != nil {
+	if err := c.db.AutoMigrate(model.Coordinates{}); err != nil {
 		return err
 	}
 	return nil

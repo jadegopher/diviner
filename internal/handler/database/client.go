@@ -1,9 +1,9 @@
 package database
 
 import (
-	"database/sql"
-	"telegram-pug/internal/database/postgres/pq/coordinates"
-	"telegram-pug/internal/database/postgres/pq/user"
+	"gorm.io/gorm"
+	"telegram-pug/internal/database/postgres/gorm/coordinates"
+	"telegram-pug/internal/database/postgres/gorm/user"
 	"telegram-pug/repo"
 	"telegram-pug/usecases"
 )
@@ -13,17 +13,17 @@ type client struct {
 	coordinates repo.ICoordinates
 }
 
-func New(db *sql.DB) (usecases.IHandlerDB, error) {
+func New(db *gorm.DB) (usecases.IHandlerDB, error) {
 	ret := &client{
 		user:        user.New(db),
 		coordinates: coordinates.New(db),
 	}
-	/*if err := ret.User().CreateTableIfNotExists(); err != nil {
+	if err := ret.User().CreateTableIfNotExists(); err != nil {
 		return nil, err
 	}
-	if err := ret.Coordinates().CreateTableIfNotExist(); err != nil {
+	if err := ret.Coordinates().CreateTableIfNotExists(); err != nil {
 		return nil, err
-	}*/
+	}
 	return ret, nil
 }
 

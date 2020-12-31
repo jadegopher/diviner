@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"gorm.io/gorm"
 	"log"
 	"telegram-pug/internal/handler/database"
 	"telegram-pug/internal/handler/weather"
@@ -17,7 +17,7 @@ type handler struct {
 	weatherToken string
 }
 
-func New(dbConn *sql.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardMarkup,
+func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardMarkup,
 	weatherToken string) (*handler, error) {
 	db, err := database.New(dbConn)
 	if err != nil {
@@ -49,7 +49,8 @@ func (h *handler) HandleUpdates() error {
 		} else {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 
-			fmt.Println(update.Message)
+			fmt.Println(update.Message.Chat)
+			fmt.Println(update.Message.Date)
 			if update.Message.Location != nil {
 				msg, err = weather.Handle(h.weatherToken, update)
 				if err != nil {
@@ -58,7 +59,7 @@ func (h *handler) HandleUpdates() error {
 			}
 			switch update.Message.Text {
 			case "/start":
-				msg.Text = "Henlo stranger... I'm the diviner pug. I forget everything except my name... " +
+				msg.Text = "Henlo stranger... I'm the diviner pug. I forgot everything except my name... " +
 					"I can't recall what happened with me but I'm trying... I lost skills of the greatest diviner.... " +
 					"Oh wow, there is a scroll of the acsients with some magic stuff. Hmmmm, may be I could try to do " +
 					"some street magic? But I need your help.Tap the button when you will be ready"

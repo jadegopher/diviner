@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/Syfaro/telegram-bot-api"
 	config "telegram-pug/config"
-	"telegram-pug/internal/database/postgres/pq"
+	"telegram-pug/internal/database/postgres/gorm"
 	"telegram-pug/internal/handler"
 	"telegram-pug/internal/keyboard"
 )
@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	dbConn, err := pq.NewConnection(c.PostgresLogin(), c.PostgresPassword(),
+	dbConn, err := gorm.NewConnection(c.PostgresLogin(), c.PostgresPassword(),
 		c.PostgresHost(), c.PostgresPort(), c.PostgresDbName())
 	if err != nil {
 		panic(err)
