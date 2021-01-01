@@ -6,7 +6,8 @@ import (
 )
 
 type message struct {
-	english string
+	english   string
+	frequency uint8
 }
 
 func New(english string) repo.IMessage {

@@ -1,8 +1,5 @@
 package messages
 
-import "telegram-pug/internal/services/message"
+import "telegram-pug/internal/services/messages/message"
 
-var InitConversation = message.New("Henlo %s... I'm the diviner pug." +
-	" I forgot everything except my name... I can't recall what happened with me but I'm trying... I lost skills of " +
-	"the greatest diviner.... Oh wow, there is a scroll of the acsients with some magic stuff. Hmmmm, may be I could " +
-	"try to do some street magic? But I need your help.Tap the button when you will be ready")
+var ChooseLanguage = message.New("Hello %s... Do you speak english? Говоришь по русски?")

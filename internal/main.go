@@ -5,7 +5,7 @@ import (
 	config "telegram-pug/config"
 	"telegram-pug/internal/app"
 	"telegram-pug/internal/database/postgres/gorm"
-	"telegram-pug/internal/services/keyboard"
+	"telegram-pug/internal/services/keyboards/menu"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 		panic(err)
 	}
 
-	h, err := app.New(dbConn, bot, keyboard.New(), c.WeatherToken())
+	h, err := app.New(dbConn, bot, menu.New(), c.WeatherToken())
 	if err != nil {
 		panic(err)
 	}

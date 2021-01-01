@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"telegram-pug/internal/app/handlers/def"
+	"telegram-pug/internal/app/handlers/languages"
 	"telegram-pug/internal/app/handlers/start"
 	"telegram-pug/internal/app/handlers/weather"
 	"telegram-pug/repo"
@@ -22,14 +23,20 @@ func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardM
 	if err != nil {
 		return nil, err
 	}
-
-	initHandler, err := start.New(dbConn, keyboard)
+	languageHandler, err := languages.New(dbConn)
 	if err != nil {
 		return nil, err
 	}
-	weatherHandler := weather.New(weatherToken)
+	initHandler, err := start.New(dbConn)
+	if err != nil {
+		return nil, err
+	}
+	weatherHandler, err := weather.New(dbConn, weatherToken)
+	if err != nil {
+		return nil, err
+	}
 
-	handlers := []repo.IHandler{defaultHandler, initHandler, weatherHandler}
+	handlers := []repo.IHandler{defaultHandler, initHandler, languageHandler, weatherHandler}
 
 	return &handler{
 		bot:      bot,

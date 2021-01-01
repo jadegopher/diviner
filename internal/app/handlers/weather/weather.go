@@ -3,21 +3,29 @@ package weather
 import (
 	"encoding/json"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"telegram-pug/internal/app/handlers/weather/messages"
+	"telegram-pug/internal/services/users"
 	"telegram-pug/model"
 	"telegram-pug/repo"
 	"telegram-pug/tools/http/builder"
+	"telegram-pug/usecases"
 )
 
 type weather struct {
-	token string
+	userService usecases.IUserService
+	token       string
 }
 
-func New(token string) repo.IHandler {
-	return &weather{token: token}
+func New(dbConn *gorm.DB, token string) (repo.IHandler, error) {
+	db, err := users.New(dbConn)
+	if err != nil {
+		return nil, err
+	}
+	return &weather{userService: db, token: token}, nil
 }
 
 func (w *weather) Condition(update tgbotapi.Update) bool {
@@ -53,7 +61,12 @@ func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error
 		return nil, err
 	}
 	if len(weatherInfo.Weather) != 0 {
-		msg.Text = messages.WeatherSuccess.English(weatherInfo.Weather[0].Description, weatherInfo.Info.Temp)
+		user, err := w.userService.UserInfo(update)
+		if err != nil {
+			return nil, err
+		}
+		msg.Text = messages.WeatherSuccess.CreateResponse(user.Language, weatherInfo.Weather[0].Description,
+			weatherInfo.Info.Temp)
 	} else {
 		msg.Text = messages.WeatherErr.English()
 	}

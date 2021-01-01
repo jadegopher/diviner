@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"gorm.io/gorm"
 	"telegram-pug/internal/services/users/database"
@@ -30,7 +29,6 @@ func (u *users) UserInfo(update tgbotapi.Update) (user *model.User, err error) {
 	if user, err = u.AddNewUser(update); err != nil {
 		return nil, err
 	}
-	fmt.Println(update.Message.Chat)
 	return user, nil
 }
 
