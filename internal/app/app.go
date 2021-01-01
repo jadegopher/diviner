@@ -22,7 +22,10 @@ func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardM
 	if err != nil {
 		return nil, err
 	}
-	initHandler := start.New(keyboard)
+	initHandler, err := start.New(dbConn, keyboard)
+	if err != nil {
+		return nil, err
+	}
 	weatherHandler := weather.New(weatherToken)
 
 	handlers := []repo.IHandler{userHandler, initHandler, weatherHandler}
