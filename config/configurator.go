@@ -4,7 +4,6 @@ import (
 	"github.com/joho/godotenv"
 	"os"
 	"telegram-pug/model"
-	"telegram-pug/repo"
 )
 
 type file struct {
@@ -12,7 +11,7 @@ type file struct {
 	config model.Config
 }
 
-func New(path string) repo.IConfigurator {
+func New(path string) model.IConfigurator {
 	return &file{
 		path: path,
 	}

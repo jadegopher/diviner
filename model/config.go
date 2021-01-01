@@ -1,5 +1,16 @@
 package model
 
+type IConfigurator interface {
+	Read() error
+	TelegramToken() string
+	WeatherToken() string
+	PostgresLogin() string
+	PostgresPassword() string
+	PostgresPort() string
+	PostgresDbName() string
+	PostgresHost() string
+}
+
 type Config struct {
 	TelegramToken    string `json:"telegram_token"`
 	PostgresLogin    string `json:"postgres_login"`

@@ -4,16 +4,16 @@ import (
 	"gorm.io/gorm"
 	"telegram-pug/internal/database/postgres/gorm/coordinates"
 	"telegram-pug/internal/database/postgres/gorm/user"
+	"telegram-pug/model"
 	"telegram-pug/repo"
-	"telegram-pug/usecases"
 )
 
 type client struct {
-	user        repo.IUser
-	coordinates repo.ICoordinates
+	user        model.IUser
+	coordinates model.ICoordinates
 }
 
-func New(db *gorm.DB) (usecases.IHandlerDB, error) {
+func New(db *gorm.DB) (repo.IDb, error) {
 	ret := &client{
 		user:        user.New(db),
 		coordinates: coordinates.New(db),
@@ -27,10 +27,10 @@ func New(db *gorm.DB) (usecases.IHandlerDB, error) {
 	return ret, nil
 }
 
-func (c *client) User() repo.IUser {
+func (c *client) User() model.IUser {
 	return c.user
 }
 
-func (c *client) Coordinates() repo.ICoordinates {
+func (c *client) Coordinates() model.ICoordinates {
 	return c.coordinates
 }

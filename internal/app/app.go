@@ -4,8 +4,8 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"gorm.io/gorm"
 	"log"
+	"telegram-pug/internal/app/handlers/def"
 	"telegram-pug/internal/app/handlers/start"
-	"telegram-pug/internal/app/handlers/users"
 	"telegram-pug/internal/app/handlers/weather"
 	"telegram-pug/repo"
 )
@@ -18,17 +18,18 @@ type handler struct {
 func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardMarkup,
 	weatherToken string) (*handler, error) {
 
-	userHandler, err := users.New(dbConn)
+	defaultHandler, err := def.New(dbConn)
 	if err != nil {
 		return nil, err
 	}
+
 	initHandler, err := start.New(dbConn, keyboard)
 	if err != nil {
 		return nil, err
 	}
 	weatherHandler := weather.New(weatherToken)
 
-	handlers := []repo.IHandler{userHandler, initHandler, weatherHandler}
+	handlers := []repo.IHandler{defaultHandler, initHandler, weatherHandler}
 
 	return &handler{
 		bot:      bot,
@@ -51,18 +52,21 @@ func (h *handler) HandleUpdates() error {
 		if update.Message == nil {
 			continue
 		} else {
-			message := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-
+			msgs := make([]tgbotapi.MessageConfig, 0, 10)
 			for _, handler := range h.handlers {
 				msg, err := handler.Handle(update)
 				if err == nil && msg != nil {
-					message = *msg
+					msgs = append(msgs, *msg)
 				} else {
 					log.Println(err)
 				}
 			}
 
-			h.bot.Send(message)
+			for _, message := range msgs {
+				if _, err := h.bot.Send(message); err != nil {
+					return err
+				}
+			}
 		}
 	}
 	return nil

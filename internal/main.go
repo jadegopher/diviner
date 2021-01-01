@@ -5,7 +5,7 @@ import (
 	config "telegram-pug/config"
 	"telegram-pug/internal/app"
 	"telegram-pug/internal/database/postgres/gorm"
-	"telegram-pug/internal/keyboard"
+	"telegram-pug/internal/services/keyboard"
 )
 
 func main() {

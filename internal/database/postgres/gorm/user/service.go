@@ -2,13 +2,13 @@ package user
 
 import (
 	"gorm.io/gorm"
-	"telegram-pug/repo"
+	"telegram-pug/model"
 )
 
 type user struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) repo.IUser {
+func New(db *gorm.DB) model.IUser {
 	return &user{db: db}
 }

@@ -1,6 +1,6 @@
 package messages
 
-import "telegram-pug/internal/message"
+import "telegram-pug/internal/services/message"
 
 var InitConversation = message.New("Henlo %s... I'm the diviner pug." +
 	" I forgot everything except my name... I can't recall what happened with me but I'm trying... I lost skills of " +

@@ -1,6 +1,6 @@
 package messages
 
-import "telegram-pug/internal/message"
+import "telegram-pug/internal/services/message"
 
 var WeatherSuccess = message.New(`Hmmmmm... I see %s and temperature %3.1f degrees. Not bad for a pug who lost his memory`)
 

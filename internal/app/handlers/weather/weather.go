@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"telegram-pug/internal/app/handlers/weather/errs"
 	"telegram-pug/internal/app/handlers/weather/messages"
 	"telegram-pug/model"
 	"telegram-pug/repo"
@@ -23,7 +22,7 @@ func New(token string) repo.IHandler {
 
 func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	if update.Message.Location == nil {
-		return nil, errs.NilLocationErr
+		return nil, nil
 	}
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 	query := map[string]string{
@@ -51,7 +50,6 @@ func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error
 	}
 	if len(weatherInfo.Weather) != 0 {
 		msg.Text = messages.WeatherSuccess.English(weatherInfo.Weather[0].Description, weatherInfo.Info.Temp)
-
 	} else {
 		msg.Text = messages.WeatherErr.English()
 	}
