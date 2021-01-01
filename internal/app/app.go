@@ -54,11 +54,13 @@ func (h *handler) HandleUpdates() error {
 		} else {
 			msgs := make([]tgbotapi.MessageConfig, 0, 10)
 			for _, handler := range h.handlers {
-				msg, err := handler.Handle(update)
-				if err == nil && msg != nil {
-					msgs = append(msgs, *msg)
-				} else {
-					log.Println(err)
+				if handler.Condition(update) {
+					msg, err := handler.Handle(update)
+					if err == nil && msg != nil {
+						msgs = append(msgs, *msg)
+					} else {
+						log.Println(err)
+					}
 				}
 			}
 

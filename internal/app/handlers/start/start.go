@@ -23,10 +23,15 @@ func New(dbConn *gorm.DB, keyboard tgbotapi.ReplyKeyboardMarkup) (repo.IHandler,
 	return &start{userService: db, keyboard: keyboard}, nil
 }
 
-func (s *start) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
+func (s *start) Condition(update tgbotapi.Update) bool {
 	if update.Message.Text != "/start" {
-		return nil, nil
+		return false
 	}
+	return true
+}
+
+func (s *start) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
+
 	user := &model.User{}
 	var err error
 	user, err = s.userService.UserInfo(update)

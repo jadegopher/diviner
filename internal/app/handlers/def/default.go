@@ -22,6 +22,10 @@ func New(dbConn *gorm.DB) (repo.IHandler, error) {
 	return &def{userService: db}, nil
 }
 
+func (d *def) Condition(update tgbotapi.Update) bool {
+	return true
+}
+
 func (d *def) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	user, err := d.userService.UserInfo(update)
 	if err != nil {

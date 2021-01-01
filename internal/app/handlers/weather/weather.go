@@ -20,10 +20,14 @@ func New(token string) repo.IHandler {
 	return &weather{token: token}
 }
 
-func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
+func (w *weather) Condition(update tgbotapi.Update) bool {
 	if update.Message.Location == nil {
-		return nil, nil
+		return false
 	}
+	return true
+}
+
+func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 	query := map[string]string{
 		"lat":   strconv.FormatFloat(update.Message.Location.Latitude, 'f', -1, 64),
