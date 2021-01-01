@@ -5,10 +5,10 @@ import (
 	"telegram-pug/internal/services/messages/message"
 )
 
-var WoofResponse = message.New("Woof")
-var AhchooResponse = message.New("Ahchoo")
-var YipResponse = message.New("Yip")
-var ChompResponse = message.New("Chomp")
-var SniffResponse = message.New("Sniff sniff")
+var WoofResponse = message.New("Woof", "Вуф")
+var AhchooResponse = message.New("Ahchoo", "Апчхи")
+var YipResponse = message.New("Yip", "Блеп")
+var ChompResponse = message.New("Chomp", "Фырк")
+var SniffResponse = message.New("Sniff sniff", "Нюх нюх")
 
 var DefaultResponse = messages.New(WoofResponse, AhchooResponse, YipResponse, ChompResponse, SniffResponse)

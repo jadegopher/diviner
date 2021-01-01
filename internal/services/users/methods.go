@@ -15,12 +15,13 @@ func (u *users) AddNewUser(update tgbotapi.Update) (*model.User, error) {
 		Phone:        "",
 		SaveLocation: false,
 	}
-	if _, err := u.db.User().Select(insert.Id); err != nil {
+	res, err := u.db.User().Select(insert.Id)
+	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			if _, err := u.db.User().Insert(*insert); err != nil {
 				return nil, err
 			}
 		}
 	}
-	return insert, nil
+	return res, nil
 }

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"telegram-pug/internal/app/handlers/weather/messages"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/model"
@@ -37,11 +38,16 @@ func (w *weather) Condition(update tgbotapi.Update) bool {
 
 func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+	user, err := w.userService.UserInfo(update)
+	if err != nil {
+		return nil, err
+	}
 	query := map[string]string{
 		"lat":   strconv.FormatFloat(update.Message.Location.Latitude, 'f', -1, 64),
 		"lon":   strconv.FormatFloat(update.Message.Location.Longitude, 'f', -1, 64),
 		"units": "metric",
 		"appId": w.token,
+		"lang":  strings.ToLower(user.Language),
 	}
 	req, err := builder.New(http.MethodGet, "http://api.openweathermap.org/data/2.5/weather",
 		builder.WithQuery(query))
@@ -61,10 +67,6 @@ func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error
 		return nil, err
 	}
 	if len(weatherInfo.Weather) != 0 {
-		user, err := w.userService.UserInfo(update)
-		if err != nil {
-			return nil, err
-		}
 		msg.Text = messages.WeatherSuccess.CreateResponse(user.Language, weatherInfo.Weather[0].Description,
 			weatherInfo.Info.Temp)
 	} else {

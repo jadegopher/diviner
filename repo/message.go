@@ -6,4 +6,5 @@ type IMessages interface {
 
 type IMessage interface {
 	English(args ...interface{}) string
+	Russian(args ...interface{}) string
 }
