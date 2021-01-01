@@ -15,18 +15,18 @@ func (u *user) CreateTableIfNotExists() error {
 	return nil
 }
 
-func (u *user) Select(id uint) (model.User, error) {
-	return model.User{}, errors.New("method not implemented")
+func (u *user) Select(id uint64) (*model.User, error) {
+	return nil, errors.New("method not implemented")
 }
 
-func (u *user) Insert(user model.User) (model.User, error) {
-	return model.User{}, errors.New("method not implemented")
+func (u *user) Insert(user model.User) (*model.User, error) {
+	return nil, errors.New("method not implemented")
 }
 
-func (u *user) Update(user model.User) (model.User, error) {
-	return model.User{}, errors.New("method not implemented")
+func (u *user) Update(user model.User) (*model.User, error) {
+	return nil, errors.New("method not implemented")
 }
 
-func (u *user) Delete(id uint) error {
+func (u *user) Delete(id uint64) error {
 	return errors.New("method not implemented")
 }

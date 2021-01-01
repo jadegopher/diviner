@@ -2,7 +2,7 @@ package weather
 
 import (
 	"encoding/json"
-	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -21,9 +21,9 @@ func New(token string) repo.IHandler {
 	return &weather{token: token}
 }
 
-func (w *weather) Handle(update tgbotapi.Update) (tgbotapi.MessageConfig, error) {
+func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	if update.Message.Location == nil {
-		return tgbotapi.MessageConfig{}, errs.NilLocationErr
+		return nil, errs.NilLocationErr
 	}
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 	query := map[string]string{
@@ -35,19 +35,19 @@ func (w *weather) Handle(update tgbotapi.Update) (tgbotapi.MessageConfig, error)
 	req, err := builder.New(http.MethodGet, "http://api.openweathermap.org/data/2.5/weather",
 		builder.WithQuery(query))
 	if err != nil {
-		return tgbotapi.MessageConfig{}, err
+		return nil, err
 	}
 	resp, err := req.Do()
 	if err != nil {
-		return tgbotapi.MessageConfig{}, err
+		return nil, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return tgbotapi.MessageConfig{}, err
+		return nil, err
 	}
 	weatherInfo := &model.OpenWeather{}
 	if err := json.Unmarshal(body, weatherInfo); err != nil {
-		return tgbotapi.MessageConfig{}, err
+		return nil, err
 	}
 	if len(weatherInfo.Weather) != 0 {
 		msg.Text = messages.WeatherSuccess.English(weatherInfo.Weather[0].Description, weatherInfo.Info.Temp)
@@ -55,5 +55,5 @@ func (w *weather) Handle(update tgbotapi.Update) (tgbotapi.MessageConfig, error)
 	} else {
 		msg.Text = messages.WeatherErr.English()
 	}
-	return msg, nil
+	return &msg, nil
 }

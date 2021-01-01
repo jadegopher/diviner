@@ -1,35 +1,35 @@
 package app
 
 import (
-	"fmt"
-	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"gorm.io/gorm"
 	"log"
-	"telegram-pug/internal/app/database"
 	"telegram-pug/internal/app/handlers/start"
+	"telegram-pug/internal/app/handlers/users"
 	"telegram-pug/internal/app/handlers/weather"
-	"telegram-pug/usecases"
+	"telegram-pug/repo"
 )
 
 type handler struct {
-	db           usecases.IHandlerDB
-	bot          *tgbotapi.BotAPI
-	keyboard     tgbotapi.ReplyKeyboardMarkup
-	weatherToken string
+	bot      *tgbotapi.BotAPI
+	handlers []repo.IHandler
 }
 
 func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardMarkup,
 	weatherToken string) (*handler, error) {
-	db, err := database.New(dbConn)
+
+	userHandler, err := users.New(dbConn)
 	if err != nil {
 		return nil, err
 	}
+	initHandler := start.New(keyboard)
+	weatherHandler := weather.New(weatherToken)
+
+	handlers := []repo.IHandler{userHandler, initHandler, weatherHandler}
 
 	return &handler{
-		db:           db,
-		bot:          bot,
-		keyboard:     keyboard,
-		weatherToken: weatherToken,
+		bot:      bot,
+		handlers: handlers,
 	}, nil
 }
 
@@ -44,29 +44,22 @@ func (h *handler) HandleUpdates() error {
 		return err
 	}
 
-	initHandler := start.New(h.keyboard)
-	weatherHandler := weather.New(h.weatherToken)
-
 	for update := range updates {
 		if update.Message == nil {
 			continue
 		} else {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+			message := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 
-			fmt.Println(update.Message.Chat)
-			fmt.Println(update.Message.Date)
-
-			msg, err = initHandler.Handle(update)
-			if err != nil {
-				log.Println(err)
+			for _, handler := range h.handlers {
+				msg, err := handler.Handle(update)
+				if err == nil && msg != nil {
+					message = *msg
+				} else {
+					log.Println(err)
+				}
 			}
 
-			msg, err = weatherHandler.Handle(update)
-			if err != nil {
-				log.Println(err)
-			}
-
-			h.bot.Send(msg)
+			h.bot.Send(message)
 		}
 	}
 	return nil

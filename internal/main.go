@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Syfaro/telegram-bot-api"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	config "telegram-pug/config"
 	"telegram-pug/internal/app"
 	"telegram-pug/internal/database/postgres/gorm"

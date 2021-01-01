@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"telegram-pug/model"
 )
 
@@ -12,18 +11,33 @@ func (u *user) CreateTableIfNotExists() error {
 	return nil
 }
 
-func (u *user) Select(id uint) (model.User, error) {
-	return model.User{}, errors.New("method not implemented")
+func (u *user) Select(id uint64) (*model.User, error) {
+	ret := &model.User{}
+	err := u.db.First(ret, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
 
-func (u *user) Insert(user model.User) (model.User, error) {
-	return model.User{}, errors.New("method not implemented")
+func (u *user) Insert(user model.User) (*model.User, error) {
+	err := u.db.Create(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
-func (u *user) Update(user model.User) (model.User, error) {
-	return model.User{}, errors.New("method not implemented")
+func (u *user) Update(user model.User) (*model.User, error) {
+	if err := u.db.Model(&user).Updates(user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
-func (u *user) Delete(id uint) error {
-	return errors.New("method not implemented")
+func (u *user) Delete(id uint64) error {
+	if err := u.db.Delete(&model.User{}, id).Error; err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,6 +1,6 @@
 package keyboard
 
-import "github.com/Syfaro/telegram-bot-api"
+import "github.com/go-telegram-bot-api/telegram-bot-api"
 
 type keyboard struct {
 }
