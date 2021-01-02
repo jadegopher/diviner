@@ -16,8 +16,7 @@ type handler struct {
 	handlers []repo.IHandler
 }
 
-func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, keyboard tgbotapi.ReplyKeyboardMarkup,
-	weatherToken string) (*handler, error) {
+func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, weatherToken string) (*handler, error) {
 
 	defaultHandler, err := def.New(dbConn)
 	if err != nil {

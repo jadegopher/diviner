@@ -4,7 +4,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"gorm.io/gorm"
 	"telegram-pug/internal/app/handlers/start/messages"
-	"telegram-pug/internal/services/keyboards/languages"
+	"telegram-pug/internal/app/keyboards"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/repo"
 	"telegram-pug/usecases"
@@ -35,6 +35,6 @@ func (s *start) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) 
 		return nil, err
 	}
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, messages.ChooseLanguage.English(user.FirstName))
-	msg.ReplyMarkup = languages.New()
+	msg.ReplyMarkup = keyboards.LanguageKeyboard.Keyboard(user.Language)
 	return &msg, nil
 }

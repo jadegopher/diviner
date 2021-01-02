@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 	"telegram-pug/constants"
 	"telegram-pug/internal/app/handlers/languages/messages"
-	"telegram-pug/internal/services/keyboards/languages"
+	"telegram-pug/internal/app/keyboards"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/repo"
 	"telegram-pug/usecases"
@@ -25,7 +25,7 @@ func New(dbConn *gorm.DB) (repo.IHandler, error) {
 }
 
 func (l *lang) Condition(update tgbotapi.Update) bool {
-	if update.Message.Text != languages.EngButton && update.Message.Text != languages.RuButton {
+	if !keyboards.LanguageKeyboard.IsKeyboardButton(update.Message.Text) {
 		return false
 	}
 	return true
@@ -37,13 +37,15 @@ func (l *lang) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 		return nil, err
 	}
 	user.LastTimeOnline = time.Now().UTC().Unix()
-	switch update.Message.Text {
-	case languages.EngButton:
-		user.Language = constants.Eng
-	case languages.RuButton:
-		user.Language = constants.Ru
-	default:
-		user.Language = constants.Eng
+	if button, in := keyboards.LanguageKeyboard.KeyboardButton(update.Message.Text); in {
+		switch button.English() {
+		case keyboards.EngButton:
+			user.Language = constants.Eng
+		case keyboards.RuButton:
+			user.Language = constants.Ru
+		default:
+			user.Language = constants.Eng
+		}
 	}
 	user, err = l.userService.UpdateUserInfo(user)
 	if err != nil {

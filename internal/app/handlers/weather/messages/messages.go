@@ -10,7 +10,7 @@ var WeatherSuccess1 = message.New(`Hmmmmm... I see %s and temperature %3.1f degr
 var WeatherSuccess2 = message.New(`Wow it works!!! %s overhead and temperature %3.1f degrees`,
 	`Урааа, оно работает!!! %s над головой и температура %3.1f градусов`)
 var WeatherSuccess3 = message.New(`Ha-ha not bad for me. My third eye says that you have %s overhead. Wait wait... Temperature  %3.1f degrees Celsius`,
-	`Ха-ха, совсем неплохо. Мой третий глаз подсказывает мне, что у тебя %s над головой. Погодо погоди... Температура %3.1f градусов по Цельсию`)
+	`Ха-ха, совсем неплохо. Мой третий глаз подсказывает мне, что у тебя %s над головой. Погоди погоди... Температура %3.1f градусов по Цельсию`)
 
 var WeatherSuccess = messages.New(WeatherSuccess1, WeatherSuccess2, WeatherSuccess3)
 

@@ -13,8 +13,7 @@ func (u *user) CreateTableIfNotExists() error {
 
 func (u *user) Select(id uint64) (*model.User, error) {
 	ret := &model.User{}
-	err := u.db.First(ret, id).Error
-	if err != nil {
+	if err := u.db.First(ret, id).Error; err != nil {
 		return nil, err
 	}
 	return ret, nil

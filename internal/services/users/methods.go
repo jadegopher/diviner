@@ -18,7 +18,7 @@ func (u *users) AddNewUser(update tgbotapi.Update) (*model.User, error) {
 	res, err := u.db.User().Select(insert.Id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			if _, err := u.db.User().Insert(*insert); err != nil {
+			if res, err = u.db.User().Insert(*insert); err != nil {
 				return nil, err
 			}
 		}
