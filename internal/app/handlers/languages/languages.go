@@ -54,5 +54,7 @@ func (l *lang) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, messages.InitConversation.CreateResponse(user.Language,
 		user.FirstName))
+
+	msg.ReplyMarkup = keyboards.MenuKeyboard.Keyboard(user.Language)
 	return &msg, nil
 }

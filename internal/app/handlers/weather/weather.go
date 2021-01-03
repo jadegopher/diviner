@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"telegram-pug/internal/app/handlers/weather/messages"
+	"telegram-pug/internal/app/keyboards"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/model"
 	"telegram-pug/repo"
@@ -72,5 +73,7 @@ func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error
 	} else {
 		msg.Text = messages.WeatherErr.English()
 	}
+
+	msg.ReplyMarkup = keyboards.MenuKeyboard.Keyboard(user.Language)
 	return &msg, nil
 }

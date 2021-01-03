@@ -32,6 +32,9 @@ func (d *def) Condition(update tgbotapi.Update) bool {
 	if keyboards.LanguageKeyboard.IsKeyboardButton(update.Message.Text) {
 		return false
 	}
+	if len(update.Message.Text) == 0 {
+		return false
+	}
 	return true
 }
 
@@ -53,8 +56,9 @@ func (d *def) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 		r := rand.Intn(2)
 		if r == 0 {
 			msg.Text = messages.NoResponse.CreateResponse(user.Language)
+		} else {
+			msg.Text = messages.YesResponse.CreateResponse(user.Language)
 		}
-		msg.Text = messages.YesResponse.CreateResponse(user.Language)
 	}
 
 	msg.ReplyMarkup = keyboards.MenuKeyboard.Keyboard(user.Language)
