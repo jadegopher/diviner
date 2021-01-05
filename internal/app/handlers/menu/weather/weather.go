@@ -64,7 +64,7 @@ func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error
 		msg.Text = messages.WeatherSuccess.CreateResponse(user.Language, weatherInfo.Weather[0].Description,
 			weatherInfo.Info.Temp)
 	} else {
-		msg.Text = messages.WeatherErr.English()
+		msg.Text = messages.WeatherErr.Answer(user.Language)
 	}
 
 	msg.ReplyMarkup = keyboards.MenuKeyboard.Keyboard(user.Language)

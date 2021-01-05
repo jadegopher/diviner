@@ -5,6 +5,7 @@ type IMessages interface {
 }
 
 type IMessage interface {
+	Answer(language string, args ...interface{}) string
 	English(args ...interface{}) string
 	Russian(args ...interface{}) string
 }

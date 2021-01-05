@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := h.HandleUpdates(); err != nil {
+	if err = h.HandleUpdates(); err != nil {
 		panic(err)
 	}
 }

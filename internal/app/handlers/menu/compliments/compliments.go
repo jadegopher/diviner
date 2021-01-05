@@ -44,14 +44,7 @@ func (w *compliments) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, e
 	if err != nil && err != errs.RecordNotFound {
 		return nil, err
 	} else if err != nil && err == errs.RecordNotFound {
-		switch user.Language {
-		case constants.Eng:
-			msg.Text = messages.ComplimentErr.English()
-		case constants.Ru:
-			msg.Text = messages.ComplimentErr.Russian()
-		default:
-			msg.Text = messages.ComplimentErr.English()
-		}
+		msg.Text = messages.ComplimentErr.Answer(user.Language)
 		return &msg, nil
 	} else if err != nil {
 		return nil, err
