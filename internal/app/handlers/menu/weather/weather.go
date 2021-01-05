@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"telegram-pug/internal/app/handlers/weather/messages"
+	"telegram-pug/internal/app/handlers/menu/messages"
 	"telegram-pug/internal/app/keyboards"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/model"
@@ -28,13 +28,6 @@ func New(dbConn *gorm.DB, token string) (repo.IHandler, error) {
 		return nil, err
 	}
 	return &weather{userService: db, token: token}, nil
-}
-
-func (w *weather) Condition(update tgbotapi.Update) bool {
-	if update.Message.Location == nil {
-		return false
-	}
-	return true
 }
 
 func (w *weather) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {

@@ -16,7 +16,7 @@ type lang struct {
 	userService usecases.IUserService
 }
 
-func New(dbConn *gorm.DB) (repo.IHandler, error) {
+func New(dbConn *gorm.DB) (repo.ICondition, error) {
 	db, err := users.New(dbConn)
 	if err != nil {
 		return nil, err
@@ -24,11 +24,11 @@ func New(dbConn *gorm.DB) (repo.IHandler, error) {
 	return &lang{userService: db}, nil
 }
 
-func (l *lang) Condition(update tgbotapi.Update) bool {
+func (l *lang) Condition(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	if !keyboards.LanguageKeyboard.IsKeyboardButton(update.Message.Text) {
-		return false
+		return nil, nil
 	}
-	return true
+	return l.Handle(update)
 }
 
 func (l *lang) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {

@@ -6,19 +6,24 @@ import (
 	"log"
 	"telegram-pug/internal/app/handlers/def"
 	"telegram-pug/internal/app/handlers/languages"
+	"telegram-pug/internal/app/handlers/menu"
+	"telegram-pug/internal/app/handlers/responser"
 	"telegram-pug/internal/app/handlers/start"
-	"telegram-pug/internal/app/handlers/weather"
 	"telegram-pug/repo"
 )
 
 type handler struct {
 	bot      *tgbotapi.BotAPI
-	handlers []repo.IHandler
+	handlers []repo.ICondition
 }
 
 func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, weatherToken string) (*handler, error) {
 
 	defaultHandler, err := def.New(dbConn)
+	if err != nil {
+		return nil, err
+	}
+	responseHandler, err := responser.New(dbConn)
 	if err != nil {
 		return nil, err
 	}
@@ -30,12 +35,12 @@ func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, weatherToken string) (*handler, 
 	if err != nil {
 		return nil, err
 	}
-	weatherHandler, err := weather.New(dbConn, weatherToken)
+	weatherHandler, err := menu.New(dbConn, weatherToken)
 	if err != nil {
 		return nil, err
 	}
 
-	handlers := []repo.IHandler{defaultHandler, initHandler, languageHandler, weatherHandler}
+	handlers := []repo.ICondition{defaultHandler, responseHandler, initHandler, languageHandler, weatherHandler}
 
 	return &handler{
 		bot:      bot,
@@ -60,13 +65,11 @@ func (h *handler) HandleUpdates() error {
 		} else {
 			msgs := make([]tgbotapi.MessageConfig, 0, 10)
 			for _, handler := range h.handlers {
-				if handler.Condition(update) {
-					msg, err := handler.Handle(update)
-					if err == nil && msg != nil {
-						msgs = append(msgs, *msg)
-					} else {
-						log.Println(err)
-					}
+				msg, err := handler.Condition(update)
+				if err == nil && msg != nil {
+					msgs = append(msgs, *msg)
+				} else {
+					log.Println(err)
 				}
 			}
 

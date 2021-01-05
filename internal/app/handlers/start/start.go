@@ -14,7 +14,7 @@ type start struct {
 	userService usecases.IUserService
 }
 
-func New(dbConn *gorm.DB) (repo.IHandler, error) {
+func New(dbConn *gorm.DB) (repo.ICondition, error) {
 	db, err := users.New(dbConn)
 	if err != nil {
 		return nil, err
@@ -22,11 +22,11 @@ func New(dbConn *gorm.DB) (repo.IHandler, error) {
 	return &start{userService: db}, nil
 }
 
-func (s *start) Condition(update tgbotapi.Update) bool {
+func (s *start) Condition(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	if update.Message.Text != "/start" {
-		return false
+		return nil, nil
 	}
-	return true
+	return s.Handle(update)
 }
 
 func (s *start) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {

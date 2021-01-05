@@ -4,9 +4,6 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"gorm.io/gorm"
 	"log"
-	"math/rand"
-	"telegram-pug/internal/app/handlers/def/messages"
-	"telegram-pug/internal/app/keyboards"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/repo"
 	"telegram-pug/usecases"
@@ -17,7 +14,7 @@ type def struct {
 	userService usecases.IUserService
 }
 
-func New(dbConn *gorm.DB) (repo.IHandler, error) {
+func New(dbConn *gorm.DB) (repo.ICondition, error) {
 	db, err := users.New(dbConn)
 	if err != nil {
 		return nil, err
@@ -25,17 +22,8 @@ func New(dbConn *gorm.DB) (repo.IHandler, error) {
 	return &def{userService: db}, nil
 }
 
-func (d *def) Condition(update tgbotapi.Update) bool {
-	if keyboards.MenuKeyboard.IsKeyboardButton(update.Message.Text) {
-		return false
-	}
-	if keyboards.LanguageKeyboard.IsKeyboardButton(update.Message.Text) {
-		return false
-	}
-	if len(update.Message.Text) == 0 {
-		return false
-	}
-	return true
+func (d *def) Condition(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
+	return d.Handle(update)
 }
 
 func (d *def) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
@@ -50,17 +38,5 @@ func (d *def) Handle(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
 	}
 	log.Println(update.Message.Chat, update.Message.Text, update.ChosenInlineResult)
 
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, messages.DefaultResponse.CreateResponse(user.Language))
-
-	if update.Message.Text[len(update.Message.Text)-1] == '?' {
-		r := rand.Intn(2)
-		if r == 0 {
-			msg.Text = messages.NoResponse.CreateResponse(user.Language)
-		} else {
-			msg.Text = messages.YesResponse.CreateResponse(user.Language)
-		}
-	}
-
-	msg.ReplyMarkup = keyboards.MenuKeyboard.Keyboard(user.Language)
-	return &msg, nil
+	return nil, nil
 }
