@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"telegram-pug/internal/app/handlers/menu/messages"
+	"telegram-pug/internal/app/handlers/menu/weather/messages"
 	"telegram-pug/internal/app/keyboards"
 	"telegram-pug/internal/services/users"
 	"telegram-pug/model"

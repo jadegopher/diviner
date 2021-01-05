@@ -35,7 +35,7 @@ func New(dbConn *gorm.DB, bot *tgbotapi.BotAPI, weatherToken string) (*handler, 
 	if err != nil {
 		return nil, err
 	}
-	weatherHandler, err := menu.New(dbConn, weatherToken)
+	weatherHandler, err := menu.New(dbConn, weatherToken, "resources/en_ru_compliments.json")
 	if err != nil {
 		return nil, err
 	}
