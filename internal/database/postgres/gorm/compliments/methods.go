@@ -16,10 +16,10 @@ func (c *compliments) CreateTableIfNotExists() error {
 
 	if _, err := c.SelectRandom(model.Neutral.String()); err != nil && err != errs.RecordNotFound {
 		return err
-	}
-
-	if err := c.InsertData(); err != nil {
-		return err
+	} else if err != nil && err == errs.RecordNotFound {
+		if err = c.InsertData(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -35,7 +35,7 @@ func (c *compliments) Insert(compliment model.Compliment) (*model.Compliment, er
 func (c *compliments) SelectRandom(gender string) (*model.Compliment, error) {
 	ret := &model.Compliment{}
 	if err := c.db.Raw(`SELECT * FROM compliments WHERE gender=? AND gender=? ORDER BY RANDOM() LIMIT 1`,
-		gender, model.Neutral.String()).Scan(ret).Error; err != nil {
+		gender, model.Neutral.String()).Take(ret).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, errs.RecordNotFound
 		}

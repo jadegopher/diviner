@@ -30,13 +30,12 @@ func New(dbConn *gorm.DB, token string, complimentsPath string) (repo.ICondition
 }
 
 func (m *menu) Condition(update tgbotapi.Update) (*tgbotapi.MessageConfig, error) {
+	if update.Message.Location != nil {
+		return m.weather.Handle(update)
+	}
 
 	if btn, in := keyboards.MenuKeyboard.KeyboardButton(update.Message.Text); in {
 		switch btn.English() {
-		case keyboards.LocationBtnEn:
-			if update.Message.Location != nil {
-				return m.weather.Handle(update)
-			}
 		case keyboards.ComplimentButtonEn:
 			return m.compliments.Handle(update)
 		}
